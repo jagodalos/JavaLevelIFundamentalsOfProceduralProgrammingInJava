@@ -7,13 +7,6 @@ public class Task4 {
 		int b = 0;
 		int c;
 
-		// try {
-		// if ( a >= 500 || b >= 500) {
-		// }
-		// }catch (Exception exc){
-		// System.out.println("Please enter a number less than 500. ");
-		// }
-
 		Scanner scr = new Scanner(System.in);
 		System.out.println("Enter number a: ");
 		a = scr.nextInt();
