@@ -23,7 +23,7 @@ public class Wielokat {
 		Scanner scInt = new Scanner(System.in);
 
 		if (numberOfAngles == 3) {
-			for (int i = 2; i < numberOfAngles; i++) { 
+			for (int i = 2; i < numberOfAngles; i++) {
 				System.out.println("Podaj bok a");
 				a = scInt.nextInt();
 				System.out.println("Podaj bok b");
