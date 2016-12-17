@@ -15,7 +15,7 @@ public class Wielokat {
 
 			System.out.println("Ilosc katow w wielokacie jest nieprawidlowa.");
 			System.out.println("Zdefiniuj ilosc katow jeszcze raz");
-
+ 
 		}
 		System.out.println("Liczba katow w Twoim wielokacie to: " + numberOfAngles);
 		System.out.println();
