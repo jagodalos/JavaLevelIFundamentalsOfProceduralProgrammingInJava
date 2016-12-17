@@ -13,7 +13,7 @@ public class OdtwarzaczMuzyczny {
 		Scanner scString = new Scanner(System.in);
 
 		System.out.println("I. Wybierz Twoj gatunek muzyczny.");
-		System.out.println("1 - Rock");
+		System.out.println("1 - Rock"); 
 		System.out.println("2 - Jazz");
 		System.out.println("3 - Pop");
 		System.out.println("4 - Rnb");
