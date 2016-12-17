@@ -17,7 +17,7 @@ public class OdtwarzaczMuzyczny {
 		System.out.println("2 - Jazz");
 		System.out.println("3 - Pop");
 		System.out.println("4 - Rnb");
-		int musicType = scInt.nextInt();
+		int musicType = scInt.nextInt();  
 
 		switch (musicType) {
 
