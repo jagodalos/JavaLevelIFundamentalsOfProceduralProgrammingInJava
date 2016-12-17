@@ -10,13 +10,9 @@ public class EmptyMailBox {
 
 		boolean IsMailBoxEmpty = true;
 
-		IsMailBoxEmpty = true ? true : false;
+		String communicate = IsMailBoxEmpty  ? "POCZTA JEST PUSTA" : "MASZ WIADOMOSC";
 
-		if (IsMailBoxEmpty == true) {
-			System.out.println("POCZTA JEST PUSTA");
-		} else {
-			System.out.println("MASZ WIADOMOSC");
-		}
+		System.out.println(communicate);
 
 	}
 
