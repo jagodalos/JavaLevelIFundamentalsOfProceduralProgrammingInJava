@@ -13,7 +13,7 @@ public class OdtwarzaczMuzyczny {
 		Scanner scString = new Scanner(System.in);
 
 		System.out.println("I. Wybierz Twoj gatunek muzyczny.");
-		System.out.println("1 - Rock"); 
+		System.out.println("1 - Rock");
 		System.out.println("2 - Jazz");
 		System.out.println("3 - Pop");
 		System.out.println("4 - Rnb");
@@ -71,9 +71,7 @@ public class OdtwarzaczMuzyczny {
 
 		boolean wysoki = scBool.nextBoolean();
 
-		System.out.println("Sredni ton - napisz \"true\", \"false\" - nie.");
-
-		boolean sredni = scBool.nextBoolean();
+		boolean sredni = false;
 
 		String tones = " ";
 
@@ -87,18 +85,15 @@ public class OdtwarzaczMuzyczny {
 
 		if (!niski && !wysoki) {
 			sredni = true;
-			tones += "sredni ";
+		} else {
+			System.out.println("Sredni ton - napisz \"true\", \"false\" - nie.");
 
-		} else if (!niski && wysoki == true && sredni == true) {
-			tones += ",sredni";
+			sredni = scBool.nextBoolean();
+
 		}
 
-		else if (!wysoki && niski == true && sredni == true) {
+		if (sredni == true) {
 			tones += ",sredni";
-		}
-
-		else if (niski == true && sredni == true && wysoki == true) {
-			tones += " sredni";
 		}
 
 		System.out.println();
@@ -113,30 +108,14 @@ public class OdtwarzaczMuzyczny {
 		case 1:
 			System.out.println("VI. Wybierz ilosc DB (decybeli).");
 			numberOfDBOneSpeaker = scInt.nextInt();
-			if (numberOfDBOneSpeaker > 10) {
-				System.out.println("Ilosc DB w jednym glosniku nie moze przekraczac 10 !");
-			} else {
-				// System.out.println("Ilosc decybeli " + numberOfDBOneSpeaker);
-			}
 			break;
 		case 2:
 			System.out.println("VI. Wybierz ilosc DB (decybeli) w lewym glosniku");
 			numberOfDBLeftSpeaker = scInt.nextInt();
-			if (numberOfDBLeftSpeaker > 10) {
-				System.out.println("Ilosc DB w jednym glosniku nie moze przekraczac 10 !");
-			} else {
-				numberOfDBRightSpeaker = 10 - numberOfDBLeftSpeaker;
-
-				// System.out.println("Ilosc decybeli w lewym glosniku: " +
-				// numberOfDBLeftSpeaker + " "
-				// + "Ilosc decybeli w prawym glosniku: " +
-				// numberOfDBRightSpeaker);
-			}
-
+			numberOfDBRightSpeaker = 10 - numberOfDBLeftSpeaker;
 			break;
 		default:
 			System.out.println("Wprowadziles niepoprawny numer");
-
 		}
 
 		System.out.println();
@@ -146,11 +125,13 @@ public class OdtwarzaczMuzyczny {
 		System.out.println("Twoj typ muzyki: " + variableMusicType);
 		System.out.println("Poziom natezenia muzyki: " + variableMusicVolume);
 		System.out.println("Ton/y muzyki: " + tones);
-		if (numberOfDBOneSpeaker != 0)
+		if (numberOfDBOneSpeaker != 0) {
 			System.out.println("Ilosc DB w glosniku: " + numberOfDBOneSpeaker);
-		if (numberOfDBRightSpeaker != 0 || numberOfDBLeftSpeaker != 0)
+		}
+		if (numberOfDBRightSpeaker != 0 || numberOfDBLeftSpeaker != 0) {
 			System.out.println("Ilosc DB w prawym glosniku: " + numberOfDBRightSpeaker + "\nIlosc DB w lewym glosniku: "
 					+ numberOfDBLeftSpeaker);
+		}
 		System.out.println(
 				"-------------------------------------------------------------------------------------------------------------");
 	}

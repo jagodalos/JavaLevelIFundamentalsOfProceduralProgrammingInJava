@@ -24,20 +24,15 @@ public class LiczbaPseudolosowa {
 		System.out.println("Wylosowana liczba calkowita z zakresu 1-30 to : " + generator.nextInt(31));
 		System.out.println();
 
-		// System.out.println("Kolejne wyniki losowan: ");
-		// for (int i = 0; i < 10; i++){
-		// System.out.print(generator.nextInt(31) + " ");
-		// }
-
 		int result = generator.nextInt(31);
 		int numberOfAttempts = 0;
 
-		while (result != myNumbers) {
-			result = generator.nextInt(31) + 1;
+		do {
+			result = generator.nextInt(31);
 			System.out.print(" " + result);
 			numberOfAttempts++;
+		} while (result != myNumbers);
 
-		}
 		System.out.println();
 		System.out.println();
 		System.out.println("Potrzebowalismy " + numberOfAttempts + " prób do uzyskania Twojej liczby.");

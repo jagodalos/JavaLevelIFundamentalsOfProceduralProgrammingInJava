@@ -19,7 +19,7 @@ public class PotegaLiczby {
 		int result = 0;
 		result = base;
 
-		for (int i = 0; i < power - 1; i++) {
+		for (int i = 1; i < power; i++) {
 			result = result * base;
 		}
 		System.out.println("Liczba " + base + " podniesiona do potegi " + power + " jest rowna " + result + ".");
