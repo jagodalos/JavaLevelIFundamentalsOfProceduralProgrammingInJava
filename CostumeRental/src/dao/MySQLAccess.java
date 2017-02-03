@@ -1,0 +1,54 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+
+public class MySQLAccess {
+
+	private final static String DB_NAME = "costume_rental";
+	private final static String USER = "root";
+	private final static String PASSWORD = "Whiteberry91";
+
+	public static Connection getConnection() {
+		Connection connect = null;
+		try {
+			return connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + DB_NAME + "?useSSL=false",
+					USER, PASSWORD);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+
+	// You need to close the resultSet
+	public static void close(Connection connection, ResultSet resultSet, PreparedStatement preparedStatement) {
+		try {
+			if (resultSet != null) {
+				resultSet.close();
+			}
+
+			if (preparedStatement != null) {
+				preparedStatement.close();
+			}
+
+			if (connection != null) {
+				connection.close();
+			}
+		} catch (Exception e) {
+
+		}
+	}
+
+	public static String getDbName() {
+		return DB_NAME;
+	}
+	
+	
+
+}
