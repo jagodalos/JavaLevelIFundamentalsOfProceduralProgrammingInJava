@@ -6,6 +6,9 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
+import java.awt.SystemColor;
+import javax.swing.JComboBox;
 
 public class MainFrame {
 
@@ -43,6 +46,8 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
+		frame.getContentPane().setBackground(new Color(245, 245, 245));
+		frame.setBackground(SystemColor.info);
 		frame.setBounds(100, 100, 942, 595);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -51,21 +56,24 @@ public class MainFrame {
 		tableCostume.setBounds(43, 28, 405, 198);
 		frame.getContentPane().add(tableCostume);
 		
-		JButton btnAddCustomerName = new JButton("New button");
-		btnAddCustomerName.setBounds(649, 267, 245, 96);
+		JButton btnAddCustomerName = new JButton("Add customer");
+		btnAddCustomerName.setBackground(SystemColor.textHighlight);
+		btnAddCustomerName.setForeground(Color.BLACK);
+		btnAddCustomerName.setBounds(686, 266, 208, 41);
 		frame.getContentPane().add(btnAddCustomerName);
 		
 		textFieldCustomerName = new JTextField();
-		textFieldCustomerName.setBounds(387, 296, 236, 39);
+		textFieldCustomerName.setBounds(424, 267, 236, 39);
 		frame.getContentPane().add(textFieldCustomerName);
 		textFieldCustomerName.setColumns(10);
 		
 		textFieldPrice = new JTextField();
-		textFieldPrice.setBounds(474, 104, 236, 39);
+		textFieldPrice.setBounds(461, 106, 236, 39);
 		frame.getContentPane().add(textFieldPrice);
 		textFieldPrice.setColumns(10);
 		
-		JButton btnAddPrice = new JButton("New button");
+		JButton btnAddPrice = new JButton("Add price");
+		btnAddPrice.setBackground(SystemColor.textHighlight);
 		btnAddPrice.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -74,17 +82,24 @@ public class MainFrame {
 		frame.getContentPane().add(btnAddPrice);
 		
 		textFieldCostume = new JTextField();
-		textFieldCostume.setBounds(474, 40, 236, 39);
+		textFieldCostume.setBounds(461, 40, 236, 39);
 		frame.getContentPane().add(textFieldCostume);
 		textFieldCostume.setColumns(10);
 		
-		JButton btnAddCostume = new JButton("New button");
+		JButton btnAddCostume = new JButton("Add costume");
+		btnAddCostume.setBackground(new Color(135, 206, 250));
 		btnAddCostume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
 			}
 		});
-		btnAddCostume.setBounds(723, 39, 171, 41);
+		btnAddCostume.setBounds(707, 39, 187, 41);
 		frame.getContentPane().add(btnAddCostume);
+		
+		JComboBox comboBox = new JComboBox();
+		comboBox.setForeground(SystemColor.text);
+		comboBox.setBackground(SystemColor.text);
+		comboBox.setBounds(117, 267, 222, 39);
+		frame.getContentPane().add(comboBox);
 	}
 }
