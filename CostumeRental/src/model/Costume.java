@@ -5,14 +5,7 @@ public class Costume {
 	private int id;
 	private String name;
 	private int price;
-	private boolean available;
-	
-	public Costume(int id, String name, int price, boolean available) {
-		this.id = id;
-		this.name = name;
-		this.price = price;
-		this.available = available;
-	}
+	private String available;
 
 	public int getId() {
 		return id;
@@ -38,14 +31,12 @@ public class Costume {
 		this.price = price;
 	}
 
-	public boolean isAvailable() {
+	public String getAvailable() {
 		return available;
 	}
 
-	public void setAvailable(boolean available) {
+	public void setAvailable(String available) {
 		this.available = available;
 	}
 
-
-	
 }

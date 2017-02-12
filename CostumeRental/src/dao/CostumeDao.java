@@ -1,38 +1,55 @@
 package dao;
 
-import com.mysql.jdbc.PreparedStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import model.Costume;
+import model.Customer;
 import util.MySQLAccess;
 
 public class CostumeDao {
-	
-	private final String COSTUME = "costume";
 
-	public void add(String name, int price, String avilability) throws Exception {
-		PreparedStatement preparedStatement = null;
-		try {
+	private final String COSTUME_TABLE_NAME = "costume";
+	private Connection connection;
 
-			
-			// PreparedStatements can use variables and are more efficient
-			preparedStatement = (PreparedStatement) MySQLAccess.getConnection()
-					.prepareStatement("insert into  " + MySQLAccess.getDbName() + "." + COSTUME + " values (default, ?, ?, ?)");
-			// "myuser, webpage, datum, summary, COMMENTS from
-			// feedback.comments");
-			// Parameters start with 1
-			preparedStatement.setString(1, name);
-			preparedStatement.setString(2, Integer.toString(price));
-			preparedStatement.setString(3, avilability);
-			preparedStatement.executeUpdate();
-
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			MySQLAccess.close(MySQLAccess.getConnection(), null, preparedStatement);
-		}
-		
+	public CostumeDao() {
+		connection = MySQLAccess.getConnection();
 	}
 
+	public void addCostume(Costume costume) {
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection.prepareStatement("insert into " + COSTUME_TABLE_NAME + "(name, price, available) values (?, ?, ?)");
 
+			preparedStatement.setString(1, costume.getName());
+			preparedStatement.setInt(2, costume.getPrice());
+			preparedStatement.setString(3, costume.getAvailable());
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			MySQLAccess.close(connection, null, preparedStatement);
+		}
+	}
 	
-	
+	public ResultSet getAllCostume() {
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		try {
+			preparedStatement = connection.prepareStatement("select * from " + COSTUME_TABLE_NAME);
+			rs = preparedStatement.executeQuery();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+//			MySQLAccess.close(connection, null, preparedStatement);
+		}
+		return rs;
+	}
+
 }

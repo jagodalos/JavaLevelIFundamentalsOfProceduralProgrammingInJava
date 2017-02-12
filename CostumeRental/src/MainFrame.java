@@ -4,12 +4,10 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import com.sun.org.apache.bcel.internal.generic.ISUB;
-
+import dao.CostumeDao;
 import dao.CustomerDao;
 import model.Costume;
 import model.Customer;
-import model.Rent;
 import net.proteanit.sql.DbUtils;
 import util.CostumeRentalUtil;
 import util.MySQLAccess;
@@ -20,11 +18,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.JComboBox;
+import java.awt.Font;
+import javax.swing.table.DefaultTableModel;
+
+import com.mysql.fabric.xmlrpc.base.Array;
+import javax.swing.ListSelectionModel;
 
 public class MainFrame {
 
@@ -66,12 +71,14 @@ public class MainFrame {
 		frame = new JFrame();
 		frame.getContentPane().setBackground(new Color(245, 245, 245));
 		frame.setBackground(SystemColor.info);
-		frame.setBounds(100, 100, 942, 595);
+		frame.setBounds(100, 100, 1769, 1016);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 
 		tableCostume = new JTable();
-		tableCostume.setBounds(43, 28, 405, 198);
+		tableCostume.setBounds(43, 35, 825, 191);
+		tableCostume.setCellSelectionEnabled(false);
+
 		frame.getContentPane().add(tableCostume);
 
 		JButton btnAddCustomerName = new JButton("Add customer");
@@ -101,21 +108,12 @@ public class MainFrame {
 		textFieldCustomerName.setColumns(10);
 
 		textFieldPrice = new JTextField();
-		textFieldPrice.setBounds(461, 106, 236, 39);
+		textFieldPrice.setBounds(914, 130, 420, 96);
 		frame.getContentPane().add(textFieldPrice);
 		textFieldPrice.setColumns(10);
 
-		JButton btnAddPrice = new JButton("Add price");
-		btnAddPrice.setBackground(SystemColor.textHighlight);
-		btnAddPrice.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnAddPrice.setBounds(723, 105, 171, 41);
-		frame.getContentPane().add(btnAddPrice);
-
 		textFieldCostume = new JTextField();
-		textFieldCostume.setBounds(461, 40, 236, 39);
+		textFieldCostume.setBounds(914, 35, 420, 75);
 		frame.getContentPane().add(textFieldCostume);
 		textFieldCostume.setColumns(10);
 
@@ -123,10 +121,23 @@ public class MainFrame {
 		btnAddCostume.setBackground(new Color(135, 206, 250));
 		btnAddCostume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String costumeName = textFieldCostume.getText();
+				String priceValue = textFieldPrice.getText();
+				if (!CostumeRentalUtil.isBlankOrNull(costumeName) && !CostumeRentalUtil.isBlankOrNull(priceValue)) {
+					Costume costume = new Costume();
+					costume.setName(costumeName);
+					costume.setPrice(Integer.valueOf(priceValue));
+					costume.setAvailable("T");
+					CostumeDao costumeDao = new CostumeDao();
+					costumeDao.addCostume(costume);
+					textFieldCostume.setText("");
+					textFieldPrice.setText("");
+					refreshCostumeTable();
+				}
 
 			}
 		});
-		btnAddCostume.setBounds(707, 39, 187, 41);
+		btnAddCostume.setBounds(1399, 28, 282, 82);
 		frame.getContentPane().add(btnAddCostume);
 
 		CustomerDao customerDao = new CustomerDao();
@@ -137,12 +148,36 @@ public class MainFrame {
 		frame.getContentPane().add(comboBoxCustomer);
 
 		tableHistoryOfRents = new JTable();
-		tableHistoryOfRents.setBounds(43, 336, 841, 143);
+		tableHistoryOfRents.setFont(new Font("Tahoma", Font.PLAIN, 50));
+		tableHistoryOfRents.setBounds(43, 336, 1668, 564);
+		tableHistoryOfRents.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		tableHistoryOfRents.setRowHeight(80);
 		frame.getContentPane().add(tableHistoryOfRents);
+		
+		JButton btnRent = new JButton("Rent");
+		btnRent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int [] selectedRows = tableCostume.getSelectedRows();
+				List<Costume> costumeList = new ArrayList<Costume>();
+				for(int i = 0; i < selectedRows.length; i++){
+					Costume costume = new Costume();
+					costume.setName((String) tableCostume.getValueAt(i, 2));
+					costume.setPrice((int) tableCostume.getValueAt(i, 3));
+					costume.setAvailable((String) tableCostume.getValueAt(i, 4));
+					costumeList.add(costume);
+				}
+				System.out.println(costumeList);
+				
+			}
+		});
+		btnRent.setBounds(1506, 266, 171, 41);
+		frame.getContentPane().add(btnRent);
 
-		fillTableHistoryOfRents((Customer) comboBoxCustomer.getSelectedItem());
+		// fillTableHistoryOfRents((Customer)
+		// comboBoxCustomer.getSelectedItem());
 
 		fillComboBoxCustomer();
+		fillCostumeTable();
 
 	}
 
@@ -166,22 +201,33 @@ public class MainFrame {
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
 		try {
-			preparedStatement = connection.prepareStatement("select  rent.id, rent.data, costume.id, costume.name, costume.price "
-					+ "from rent "
-					+ "left join customer on rent.customer_id = customer.id "
-					+ "left join costume on rent.costume_id = costume.id;"
-//					+ "where customer_id = ?;"
-					);
-//			preparedStatement.setInt(1, 1);
+			preparedStatement = connection
+					.prepareStatement("select  rent.id, rent.data, costume.id, costume.name, costume.price "
+							+ "from rent " + "left join customer on rent.customer_id = customer.id "
+							+ "left join costume on rent.costume_id = costume.id;"
+			// + "where customer_id = ?;"
+			);
+			// preparedStatement.setInt(1, 1);
 			rs = preparedStatement.executeQuery();
-			
-			tableCostume.setModel(DbUtils.resultSetToTableModel(rs));
-			
+
+			tableHistoryOfRents.setModel(DbUtils.resultSetToTableModel(rs));
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			MySQLAccess.close(connection, rs, preparedStatement);
 		}
 	}
+	
+	public void fillCostumeTable(){
+		CostumeDao costumeDao = new CostumeDao();
+		
+		tableCostume.setModel(DbUtils.resultSetToTableModel(costumeDao.getAllCostume()));
+	}
 
+	public void refreshCostumeTable(){
+		CostumeDao costumeDao = new CostumeDao();
+		tableCostume.removeAll();
+		tableCostume.setModel(DbUtils.resultSetToTableModel(costumeDao.getAllCostume()));
+	}
 }
