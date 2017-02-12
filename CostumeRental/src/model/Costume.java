@@ -1,13 +1,13 @@
-package models;
+package model;
 
-public class CostumeModel {
+public class Costume {
 
 	private int id;
 	private String name;
 	private int price;
 	private boolean available;
 	
-	public CostumeModel(int id, String name, int price, boolean available) {
+	public Costume(int id, String name, int price, boolean available) {
 		this.id = id;
 		this.name = name;
 		this.price = price;

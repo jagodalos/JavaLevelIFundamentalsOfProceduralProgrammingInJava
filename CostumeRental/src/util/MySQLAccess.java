@@ -1,4 +1,4 @@
-package dao;
+package util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -10,9 +10,9 @@ import java.util.Date;
 
 public class MySQLAccess {
 
-	private final static String DB_NAME = "costume_rental";
+	private final static String DB_NAME = "costiumrentaldb";
 	private final static String USER = "root";
-	private final static String PASSWORD = "Whiteberry91";
+	private final static String PASSWORD = "root";
 
 	public static Connection getConnection() {
 		Connection connect = null;

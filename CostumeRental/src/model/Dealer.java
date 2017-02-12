@@ -1,11 +1,11 @@
-package models;
+package model;
 
-public class CustomerModel {
-	
+public class Dealer {
+
 	private int id;
 	private String name;
-	
-	public CustomerModel(int id, String name) {
+
+	public Dealer(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -25,14 +25,5 @@ public class CustomerModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
-
-
-	
-	
 
 }
-
-
-

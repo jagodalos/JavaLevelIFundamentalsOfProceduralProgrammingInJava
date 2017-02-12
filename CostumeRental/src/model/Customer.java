@@ -1,15 +1,10 @@
-package models;
+package model;
 
-public class DealerModel {
-
+public class Customer {
+	
 	private int id;
 	private String name;
-
-	public DealerModel(int id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-
+	
 	public int getId() {
 		return id;
 	}
@@ -25,5 +20,8 @@ public class DealerModel {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 }
+
+
+

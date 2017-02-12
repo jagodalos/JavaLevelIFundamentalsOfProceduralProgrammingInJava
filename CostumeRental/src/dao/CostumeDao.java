@@ -2,6 +2,8 @@ package dao;
 
 import com.mysql.jdbc.PreparedStatement;
 
+import util.MySQLAccess;
+
 public class CostumeDao {
 	
 	private final String COSTUME = "costume";
