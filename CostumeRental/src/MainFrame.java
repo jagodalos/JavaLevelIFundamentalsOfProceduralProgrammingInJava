@@ -30,16 +30,26 @@ import javax.swing.table.DefaultTableModel;
 
 import com.mysql.fabric.xmlrpc.base.Array;
 import javax.swing.ListSelectionModel;
+import java.awt.Window.Type;
+import java.awt.Dialog.ModalExclusionType;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.MatteBorder;
+import javax.swing.border.BevelBorder;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.LineBorder;
+import javax.swing.ImageIcon;
+import java.awt.Toolkit;
+import javax.swing.JLabel;
 
 public class MainFrame {
 
-	private JFrame frame;
+	private JFrame frmCostumeRental;
 	private JTable tableCostume;
-	private JTextField textFieldCustomerName;
-	private JTextField textFieldPrice;
 	private JTextField textFieldCostume;
 	private JComboBox<String> comboBoxCustomer;
 	private JTable tableHistoryOfRents;
+	private JTextField textFieldPrice;
+	private JTextField textFieldCustomerName;
 
 	/**
 	 * Launch the application.
@@ -49,7 +59,7 @@ public class MainFrame {
 			public void run() {
 				try {
 					MainFrame window = new MainFrame();
-					window.frame.setVisible(true);
+					window.frmCostumeRental.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -68,20 +78,28 @@ public class MainFrame {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frame = new JFrame();
-		frame.getContentPane().setBackground(new Color(245, 245, 245));
-		frame.setBackground(SystemColor.info);
-		frame.setBounds(100, 100, 1769, 1016);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(null);
+		frmCostumeRental = new JFrame();
+		frmCostumeRental.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\jagod\\Desktop\\bat3.png"));
+		frmCostumeRental.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+		frmCostumeRental.setForeground(new Color(0, 0, 0));
+		frmCostumeRental.setFont(new Font("Calibri", Font.PLAIN, 12));
+		frmCostumeRental.setTitle(" COSTUMES RENTAL ");
+		frmCostumeRental.getContentPane().setBackground(SystemColor.menu);
+		frmCostumeRental.setBackground(new Color(0, 0, 0));
+		frmCostumeRental.setBounds(100, 100, 1769, 1016);
+		frmCostumeRental.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmCostumeRental.getContentPane().setLayout(null);
 
 		tableCostume = new JTable();
-		tableCostume.setBounds(43, 35, 825, 191);
+		tableCostume.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		tableCostume.setFont(new Font("Calibri", Font.PLAIN, 30));
+		tableCostume.setBounds(42, 200, 825, 264);
 		tableCostume.setCellSelectionEnabled(false);
 
-		frame.getContentPane().add(tableCostume);
+		frmCostumeRental.getContentPane().add(tableCostume);
 
-		JButton btnAddCustomerName = new JButton("Add customer");
+		JButton btnAddCustomerName = new JButton("ADD CUSTOMER");
+		btnAddCustomerName.setFont(new Font("Calibri", Font.BOLD, 31));
 		btnAddCustomerName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String customerName = textFieldCustomerName.getText();
@@ -97,28 +115,20 @@ public class MainFrame {
 
 			}
 		});
-		btnAddCustomerName.setBackground(SystemColor.textHighlight);
-		btnAddCustomerName.setForeground(Color.BLACK);
-		btnAddCustomerName.setBounds(686, 266, 208, 41);
-		frame.getContentPane().add(btnAddCustomerName);
-
-		textFieldCustomerName = new JTextField();
-		textFieldCustomerName.setBounds(424, 267, 236, 39);
-		frame.getContentPane().add(textFieldCustomerName);
-		textFieldCustomerName.setColumns(10);
-
-		textFieldPrice = new JTextField();
-		textFieldPrice.setBounds(914, 130, 420, 96);
-		frame.getContentPane().add(textFieldPrice);
-		textFieldPrice.setColumns(10);
+		btnAddCustomerName.setBackground(new Color(135, 206, 235));
+		btnAddCustomerName.setForeground(new Color(0, 0, 0));
+		btnAddCustomerName.setBounds(960, 530, 275, 58);
+		frmCostumeRental.getContentPane().add(btnAddCustomerName);
 
 		textFieldCostume = new JTextField();
-		textFieldCostume.setBounds(914, 35, 420, 75);
-		frame.getContentPane().add(textFieldCostume);
+		textFieldCostume.setBounds(971, 61, 420, 75);
+		frmCostumeRental.getContentPane().add(textFieldCostume);
 		textFieldCostume.setColumns(10);
 
-		JButton btnAddCostume = new JButton("Add costume");
-		btnAddCostume.setBackground(new Color(135, 206, 250));
+		JButton btnAddCostume = new JButton("ADD COSTUME");
+		btnAddCostume.setFont(new Font("Calibri", Font.BOLD, 32));
+		btnAddCostume.setForeground(new Color(0, 0, 0));
+		btnAddCostume.setBackground(new Color(135, 206, 235));
 		btnAddCostume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String costumeName = textFieldCostume.getText();
@@ -137,24 +147,29 @@ public class MainFrame {
 
 			}
 		});
-		btnAddCostume.setBounds(1399, 28, 282, 82);
-		frame.getContentPane().add(btnAddCostume);
+		btnAddCostume.setBounds(1439, 105, 282, 82);
+		frmCostumeRental.getContentPane().add(btnAddCostume);
 
 		CustomerDao customerDao = new CustomerDao();
 		comboBoxCustomer = new JComboBox<String>();
-		comboBoxCustomer.setForeground(Color.BLACK);
-		comboBoxCustomer.setBackground(SystemColor.text);
-		comboBoxCustomer.setBounds(117, 267, 222, 39);
-		frame.getContentPane().add(comboBoxCustomer);
+		comboBoxCustomer.setToolTipText("");
+		comboBoxCustomer.setFont(new Font("Calibri", Font.PLAIN, 30));
+		comboBoxCustomer.setForeground(new Color(0, 0, 0));
+		comboBoxCustomer.setBackground(new Color(255, 255, 255));
+		comboBoxCustomer.setBounds(67, 519, 353, 68);
+		frmCostumeRental.getContentPane().add(comboBoxCustomer);
 
 		tableHistoryOfRents = new JTable();
-		tableHistoryOfRents.setFont(new Font("Tahoma", Font.PLAIN, 50));
-		tableHistoryOfRents.setBounds(43, 336, 1668, 564);
+		tableHistoryOfRents.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
+		tableHistoryOfRents.setFont(new Font("Calibri", Font.PLAIN, 50));
+		tableHistoryOfRents.setBounds(42, 731, 1669, 169);
 		tableHistoryOfRents.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		tableHistoryOfRents.setRowHeight(80);
-		frame.getContentPane().add(tableHistoryOfRents);
+		frmCostumeRental.getContentPane().add(tableHistoryOfRents);
 		
-		JButton btnRent = new JButton("Rent");
+		JButton btnRent = new JButton("RENT");
+		btnRent.setFont(new Font("Calibri", Font.BOLD, 34));
+		btnRent.setBackground(new Color(135, 206, 235));
 		btnRent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int [] selectedRows = tableCostume.getSelectedRows();
@@ -170,8 +185,23 @@ public class MainFrame {
 				
 			}
 		});
-		btnRent.setBounds(1506, 266, 171, 41);
-		frame.getContentPane().add(btnRent);
+		btnRent.setBounds(1474, 505, 212, 107);
+		frmCostumeRental.getContentPane().add(btnRent);
+		
+		textFieldPrice = new JTextField();
+		textFieldPrice.setColumns(10);
+		textFieldPrice.setBounds(971, 164, 420, 75);
+		frmCostumeRental.getContentPane().add(textFieldPrice);
+		
+		textFieldCustomerName = new JTextField();
+		textFieldCustomerName.setColumns(10);
+		textFieldCustomerName.setBounds(471, 519, 420, 75);
+		frmCostumeRental.getContentPane().add(textFieldCustomerName);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\jagod\\Desktop\\bat2.png"));
+		lblNewLabel.setBounds(90, 14, 448, 169);
+		frmCostumeRental.getContentPane().add(lblNewLabel);
 
 		// fillTableHistoryOfRents((Customer)
 		// comboBoxCustomer.getSelectedItem());
