@@ -5,7 +5,7 @@ public class Costume {
 	private int id;
 	private String name;
 	private int price;
-	private String available;
+	private boolean available;
 
 	public int getId() {
 		return id;
@@ -31,11 +31,11 @@ public class Costume {
 		this.price = price;
 	}
 
-	public String getAvailable() {
+	public boolean isAvailable() {
 		return available;
 	}
 
-	public void setAvailable(String available) {
+	public void setAvailable(boolean available) {
 		this.available = available;
 	}
 

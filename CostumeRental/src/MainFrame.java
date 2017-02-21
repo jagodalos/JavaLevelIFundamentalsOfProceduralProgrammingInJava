@@ -40,6 +40,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.ImageIcon;
 import java.awt.Toolkit;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 
 public class MainFrame {
 
@@ -50,6 +51,8 @@ public class MainFrame {
 	private JTable tableHistoryOfRents;
 	private JTextField textFieldPrice;
 	private JTextField textFieldCustomerName;
+
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -72,6 +75,7 @@ public class MainFrame {
 	 */
 	public MainFrame() {
 		initialize();
+		setUpStartData();
 	}
 
 	/**
@@ -90,29 +94,21 @@ public class MainFrame {
 		frmCostumeRental.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmCostumeRental.getContentPane().setLayout(null);
 
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(42, 200, 825, 264);
+		frmCostumeRental.getContentPane().add(scrollPane);
+
 		tableCostume = new JTable();
+		scrollPane.setViewportView(tableCostume);
 		tableCostume.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		tableCostume.setFont(new Font("Calibri", Font.PLAIN, 30));
-		tableCostume.setBounds(42, 200, 825, 264);
 		tableCostume.setCellSelectionEnabled(false);
-
-		frmCostumeRental.getContentPane().add(tableCostume);
 
 		JButton btnAddCustomerName = new JButton("ADD CUSTOMER");
 		btnAddCustomerName.setFont(new Font("Calibri", Font.BOLD, 31));
 		btnAddCustomerName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String customerName = textFieldCustomerName.getText();
-
-				if (!CostumeRentalUtil.isBlankOrNull(customerName)) {
-					Customer customer = new Customer();
-					customer.setName(customerName);
-					CustomerDao customerDao = new CustomerDao();
-					customerDao.addCustomer(customer);
-					textFieldCustomerName.setText("");
-					refreshComboBoxCustomer();
-				}
-
+				addCustomer();
 			}
 		});
 		btnAddCustomerName.setBackground(new Color(135, 206, 235));
@@ -131,20 +127,7 @@ public class MainFrame {
 		btnAddCostume.setBackground(new Color(135, 206, 235));
 		btnAddCostume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String costumeName = textFieldCostume.getText();
-				String priceValue = textFieldPrice.getText();
-				if (!CostumeRentalUtil.isBlankOrNull(costumeName) && !CostumeRentalUtil.isBlankOrNull(priceValue)) {
-					Costume costume = new Costume();
-					costume.setName(costumeName);
-					costume.setPrice(Integer.valueOf(priceValue));
-					costume.setAvailable("T");
-					CostumeDao costumeDao = new CostumeDao();
-					costumeDao.addCostume(costume);
-					textFieldCostume.setText("");
-					textFieldPrice.setText("");
-					refreshCostumeTable();
-				}
-
+				addCostume();
 			}
 		});
 		btnAddCostume.setBounds(1439, 105, 282, 82);
@@ -166,49 +149,37 @@ public class MainFrame {
 		tableHistoryOfRents.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		tableHistoryOfRents.setRowHeight(80);
 		frmCostumeRental.getContentPane().add(tableHistoryOfRents);
-		
+
 		JButton btnRent = new JButton("RENT");
 		btnRent.setFont(new Font("Calibri", Font.BOLD, 34));
 		btnRent.setBackground(new Color(135, 206, 235));
 		btnRent.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int [] selectedRows = tableCostume.getSelectedRows();
-				List<Costume> costumeList = new ArrayList<Costume>();
-				for(int i = 0; i < selectedRows.length; i++){
-					Costume costume = new Costume();
-					costume.setName((String) tableCostume.getValueAt(i, 2));
-					costume.setPrice((int) tableCostume.getValueAt(i, 3));
-					costume.setAvailable((String) tableCostume.getValueAt(i, 4));
-					costumeList.add(costume);
-				}
-				System.out.println(costumeList);
-				
+				rent();
 			}
 		});
 		btnRent.setBounds(1474, 505, 212, 107);
 		frmCostumeRental.getContentPane().add(btnRent);
-		
+
 		textFieldPrice = new JTextField();
 		textFieldPrice.setColumns(10);
 		textFieldPrice.setBounds(971, 164, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldPrice);
-		
+
 		textFieldCustomerName = new JTextField();
 		textFieldCustomerName.setColumns(10);
 		textFieldCustomerName.setBounds(471, 519, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldCustomerName);
-		
+
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\jagod\\Desktop\\bat2.png"));
 		lblNewLabel.setBounds(90, 14, 448, 169);
 		frmCostumeRental.getContentPane().add(lblNewLabel);
+	}
 
-		// fillTableHistoryOfRents((Customer)
-		// comboBoxCustomer.getSelectedItem());
-
-		fillComboBoxCustomer();
+	public void setUpStartData() {
 		fillCostumeTable();
-
+		fillComboBoxCustomer();
 	}
 
 	public void fillComboBoxCustomer() {
@@ -248,16 +219,57 @@ public class MainFrame {
 			MySQLAccess.close(connection, rs, preparedStatement);
 		}
 	}
-	
-	public void fillCostumeTable(){
+
+	public void fillCostumeTable() {
 		CostumeDao costumeDao = new CostumeDao();
-		
-		tableCostume.setModel(DbUtils.resultSetToTableModel(costumeDao.getAllCostume()));
+		tableCostume.setModel(costumeDao.getAllAvaiableCostume());
 	}
 
-	public void refreshCostumeTable(){
+	public void refreshCostumeTable() {
 		CostumeDao costumeDao = new CostumeDao();
 		tableCostume.removeAll();
-		tableCostume.setModel(DbUtils.resultSetToTableModel(costumeDao.getAllCostume()));
+		tableCostume.setModel(costumeDao.getAllAvaiableCostume());
 	}
+
+	public void addCustomer() {
+		String customerName = textFieldCustomerName.getText();
+
+		if (!CostumeRentalUtil.isBlankOrNull(customerName)) {
+			Customer customer = new Customer();
+			customer.setName(customerName);
+			CustomerDao customerDao = new CustomerDao();
+			customerDao.addCustomer(customer);
+			textFieldCustomerName.setText("");
+			refreshComboBoxCustomer();
+		}
+	}
+
+	public void addCostume() {
+		String costumeName = textFieldCostume.getText();
+		String priceValue = textFieldPrice.getText();
+		if (!CostumeRentalUtil.isBlankOrNull(costumeName) && !CostumeRentalUtil.isBlankOrNull(priceValue)) {
+			Costume costume = new Costume();
+			costume.setName(costumeName);
+			costume.setPrice(Integer.valueOf(priceValue));
+			costume.setAvailable(true);
+			CostumeDao costumeDao = new CostumeDao();
+			costumeDao.addCostume(costume);
+			textFieldCostume.setText("");
+			textFieldPrice.setText("");
+			refreshCostumeTable();
+		}
+	}
+
+	public void rent() {
+		int[] selectedRows = tableCostume.getSelectedRows();
+		List<Costume> costumeList = new ArrayList<Costume>();
+//		for (int i = 0; i < selectedRows.length; i++) {
+//			Costume costume = new Costume();
+//			costume.setName((String) tableCostume.getValueAt(i, 2));
+//			costume.setPrice((int) tableCostume.getValueAt(i, 3));
+//			costume.setAvailable((String) tableCostume.getValueAt(i, 4));
+//			costumeList.add(costume);
+//		}
+	}
+
 }

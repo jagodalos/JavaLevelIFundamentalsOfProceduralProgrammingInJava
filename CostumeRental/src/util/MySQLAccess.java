@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class MySQLAccess {
 
-	private final static String DB_NAME = "costiumrentaldb";
+	private final static String DB_NAME = "costumerentaldb";
 	private final static String USER = "root";
 	private final static String PASSWORD = "root";
 
