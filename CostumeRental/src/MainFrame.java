@@ -51,8 +51,12 @@ public class MainFrame {
 	private JTable tableHistoryOfRents;
 	private JTextField textFieldPrice;
 	private JTextField textFieldCustomerName;
-
 	private JScrollPane scrollPane;
+
+	private List<Costume> costumes = new ArrayList<Costume>();
+	private List<Customer> customers = new ArrayList<Customer>();
+
+	private final String[] tableCostumeColumnNames = { "Name", "Price" };
 
 	/**
 	 * Launch the application.
@@ -178,57 +182,28 @@ public class MainFrame {
 	}
 
 	public void setUpStartData() {
-		fillCostumeTable();
-		fillComboBoxCustomer();
-	}
-
-	public void fillComboBoxCustomer() {
-		CustomerDao customerDao = new CustomerDao();
-		for (String customerName : customerDao.getAllCustomersNames()) {
-			comboBoxCustomer.addItem(customerName);
-		}
+		refreshCostumeTable();
+		refreshComboBoxCustomer();
 	}
 
 	public void refreshComboBoxCustomer() {
 		CustomerDao customerDao = new CustomerDao();
+		customers = customerDao.getAllCustomers();
 		comboBoxCustomer.removeAllItems();
-		for (String customerName : customerDao.getAllCustomersNames()) {
-			comboBoxCustomer.addItem(customerName);
+		for (int i = 0; i < customers.size(); i++) {
+			comboBoxCustomer.addItem(customers.get(i).getName());
 		}
-	}
-
-	public void fillTableHistoryOfRents(Customer customer) {
-		Connection connection = MySQLAccess.getConnection();
-		PreparedStatement preparedStatement = null;
-		ResultSet rs = null;
-		try {
-			preparedStatement = connection
-					.prepareStatement("select  rent.id, rent.data, costume.id, costume.name, costume.price "
-							+ "from rent " + "left join customer on rent.customer_id = customer.id "
-							+ "left join costume on rent.costume_id = costume.id;"
-			// + "where customer_id = ?;"
-			);
-			// preparedStatement.setInt(1, 1);
-			rs = preparedStatement.executeQuery();
-
-			tableHistoryOfRents.setModel(DbUtils.resultSetToTableModel(rs));
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			MySQLAccess.close(connection, rs, preparedStatement);
-		}
-	}
-
-	public void fillCostumeTable() {
-		CostumeDao costumeDao = new CostumeDao();
-		tableCostume.setModel(costumeDao.getAllAvaiableCostume());
 	}
 
 	public void refreshCostumeTable() {
 		CostumeDao costumeDao = new CostumeDao();
-		tableCostume.removeAll();
-		tableCostume.setModel(costumeDao.getAllAvaiableCostume());
+		costumes = costumeDao.getAllAvaiableCostume();
+		DefaultTableModel model = new DefaultTableModel(tableCostumeColumnNames, 0);
+		for (int i = 0; i < costumes.size(); i++) {
+			model.addRow(new Object[] { costumes.get(i).getName(), costumes.get(i).getPrice() });
+
+		}
+		tableCostume.setModel(model);
 	}
 
 	public void addCustomer() {
@@ -262,14 +237,34 @@ public class MainFrame {
 
 	public void rent() {
 		int[] selectedRows = tableCostume.getSelectedRows();
-		List<Costume> costumeList = new ArrayList<Costume>();
-//		for (int i = 0; i < selectedRows.length; i++) {
-//			Costume costume = new Costume();
-//			costume.setName((String) tableCostume.getValueAt(i, 2));
-//			costume.setPrice((int) tableCostume.getValueAt(i, 3));
-//			costume.setAvailable((String) tableCostume.getValueAt(i, 4));
-//			costumeList.add(costume);
-//		}
+		List<Costume> costumeSelectedList = new ArrayList<Costume>();
+		for (int i = 0; i < selectedRows.length; i++) {
+			costumeSelectedList.add(costumes.get(selectedRows[i]));
+		}
 	}
 
+	public void fillTableHistoryOfRents(Customer customer) {
+		Connection connection = MySQLAccess.getConnection();
+		PreparedStatement preparedStatement = null;
+		ResultSet rs = null;
+		try {
+			preparedStatement = connection
+					.prepareStatement("select  rent.id, rent.data, costume.id, costume.name, costume.price "
+							+ "from rent " + "left join customer on rent.customer_id = customer.id "
+							+ "left join costume on rent.costume_id = costume.id;"
+			// + "where customer_id = ?;"
+			);
+			// preparedStatement.setInt(1, 1);
+			rs = preparedStatement.executeQuery();
+
+			tableHistoryOfRents.setModel(DbUtils.resultSetToTableModel(rs));
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			MySQLAccess.close(connection, rs, preparedStatement);
+		}
+	}
+	
+	
 }

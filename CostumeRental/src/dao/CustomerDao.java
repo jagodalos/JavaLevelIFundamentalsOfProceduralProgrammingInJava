@@ -14,6 +14,8 @@ import util.MySQLAccess;
 public class CustomerDao {
 
 	private final String COSTUMER_TABLE_NAME = "customer";
+	private final String DB_ID = "id";
+	private final String DB_COLUMN_NAME = "name";
 	private Connection connection;
 
 	public CustomerDao() {
@@ -45,7 +47,8 @@ public class CustomerDao {
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				Customer customer = new Customer();
-				customer.setName(rs.getString("name"));
+				customer.setId(rs.getInt(DB_ID));
+				customer.setName(rs.getString(DB_COLUMN_NAME));
 				customers.add(customer);
 			}
 		} catch (SQLException e) {
@@ -55,27 +58,7 @@ public class CustomerDao {
 		}
 
 		return customers;
-	}
-	
-	public Vector<String> getAllCustomersNames() {
-		Vector<String>  customersNames = new Vector<String>();
-		PreparedStatement preparedStatement = null;
-		ResultSet rs = null;
-		try {
-			preparedStatement = connection.prepareStatement("select name from " + COSTUMER_TABLE_NAME);
-			rs = preparedStatement.executeQuery();
-			while (rs.next()) {				
-				customersNames.addElement(rs.getString("name"));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}  finally {
-			MySQLAccess.close(connection, rs, preparedStatement);
-		}
-
-		return customersNames;
-	}
-	
+	}		
 
 	public Customer getCustomerById(int customerId) {
 		PreparedStatement preparedStatement = null;
