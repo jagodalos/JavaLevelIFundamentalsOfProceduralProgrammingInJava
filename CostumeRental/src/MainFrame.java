@@ -7,11 +7,16 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -20,6 +25,9 @@ import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.NumberFormatter;
 
 import dao.CostumeDao;
 import dao.CustomerDao;
@@ -28,6 +36,8 @@ import model.Costume;
 import model.Customer;
 import model.Rent;
 import util.CostumeRentalUtil;
+import util.FormatRenderer;
+import util.NumberRenderer;
 
 public class MainFrame {
 
@@ -36,13 +46,14 @@ public class MainFrame {
 	private JTextField textFieldCostume;
 	private JComboBox comboBoxCustomer;
 	private JTable tableHistoryOfRents;
-	private JTextField textFieldPrice;
+	private JFormattedTextField textFieldPrice;
 	private JTextField textFieldCustomerName;
 	private JScrollPane scrollPane;
+	private JScrollPane scrollPane_1;
 	
 	private final String[] tableCostumeColumnNames = { "Id", "Name", "Price" };
 	private final String[] rentColumnNames = { "Id", "Date and time", "Name", "Price" };
-	private JScrollPane scrollPane_1;
+
 
 	/**
 	 * Launch the application.
@@ -73,7 +84,7 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frmCostumeRental = new JFrame();
-		frmCostumeRental.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\jagod\\Desktop\\bat3.png"));
+//		frmCostumeRental.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\jagod\\Desktop\\bat3.png"));
 		frmCostumeRental.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		frmCostumeRental.setForeground(new Color(0, 0, 0));
 		frmCostumeRental.setFont(new Font("Calibri", Font.PLAIN, 12));
@@ -181,11 +192,22 @@ public class MainFrame {
 		btnRent.setBounds(1474, 505, 212, 107);
 		frmCostumeRental.getContentPane().add(btnRent);
 
-		textFieldPrice = new JTextField();
+		NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+		format.setMaximumFractionDigits(2);
+
+		NumberFormatter formatter = new NumberFormatter(format);
+		formatter.setMinimum(1.0);
+		formatter.setMaximum(10000000.0);
+		formatter.setAllowsInvalid(false);
+		formatter.setOverwriteMode(true);
+	
+		textFieldPrice = new JFormattedTextField(formatter);
 		textFieldPrice.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		textFieldPrice.setColumns(10);
 		textFieldPrice.setBounds(971, 164, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldPrice);
+		textFieldPrice.setValue(1.0);
+		
 
 		textFieldCustomerName = new JTextField();
 		textFieldCustomerName.setFont(new Font("Tahoma", Font.PLAIN, 40));
@@ -197,6 +219,7 @@ public class MainFrame {
 		lblNewLabel.setIcon(new ImageIcon("C:\\Users\\jagod\\Desktop\\bat2.png"));
 		lblNewLabel.setBounds(90, 14, 448, 169);
 		frmCostumeRental.getContentPane().add(lblNewLabel);
+	
 	}
 
 	public void setUpStartData() {
@@ -222,12 +245,18 @@ public class MainFrame {
 				return false;
 			}
 		};
+		
+		NumberFormat format = NumberFormat.getCurrencyInstance(Locale.US);
+		format.setMaximumFractionDigits(0);
+
+		NumberFormatter formatter = new NumberFormatter(format);		
 		for (int i = 0; i < costumes.size(); i++) {
 			model.addRow(
 					new Object[] { costumes.get(i).getId(), costumes.get(i).getName(), costumes.get(i).getPrice() });
 
 		}
 		tableCostume.setModel(model);
+		tableCostume.getColumnModel().getColumn(2).setCellRenderer(NumberRenderer.getCurrencyRenderer());
 		tableCostume.getColumnModel().getColumn(0).setMinWidth(0);
 		tableCostume.getColumnModel().getColumn(0).setMaxWidth(0);
 	}
@@ -248,6 +277,8 @@ public class MainFrame {
 			
 		}
 		tableHistoryOfRents.setModel(model);
+		tableHistoryOfRents.getColumnModel().getColumn(1).setCellRenderer(FormatRenderer.getDateTimeRenderer());
+		tableHistoryOfRents.getColumnModel().getColumn(3).setCellRenderer(NumberRenderer.getCurrencyRenderer());
 		tableHistoryOfRents.getColumnModel().getColumn(0).setMinWidth(0);
 		tableHistoryOfRents.getColumnModel().getColumn(0).setMaxWidth(0);
 	}
@@ -267,16 +298,16 @@ public class MainFrame {
 
 	public void addCostume() {
 		String costumeName = textFieldCostume.getText();
-		String priceValue = textFieldPrice.getText();
-		if (!CostumeRentalUtil.isBlankOrNull(costumeName) && !CostumeRentalUtil.isBlankOrNull(priceValue)) {
+		Number priceValue = (Number) textFieldPrice.getValue();
+		if (!CostumeRentalUtil.isBlankOrNull(costumeName) && priceValue != null) {
 			Costume costume = new Costume();
 			costume.setName(costumeName);
-			costume.setPrice(Integer.valueOf(priceValue));
+			costume.setPrice(new BigDecimal(priceValue.doubleValue()));
 			costume.setAvailable(true);
 			CostumeDao costumeDao = new CostumeDao();
 			costumeDao.addCostume(costume);
 			textFieldCostume.setText("");
-			textFieldPrice.setText("");
+			textFieldPrice.setValue(new Double(1));
 			refreshCostumeTable();
 		}
 	}
@@ -290,7 +321,7 @@ public class MainFrame {
 			rentDao = new RentDao();
 			costumeDao = new CostumeDao();
 			rentDao.rentCostume(currentCustommer.getId(), (int) tableCostume.getModel().getValueAt(selectedRows[i], 0));
-			costumeDao.setCostumeAvailable(selectedRows[i], false);
+			costumeDao.setCostumeAvailable((int) tableCostume.getModel().getValueAt(selectedRows[i], 0), false);
 		}
 
 		refreshCostumeTable();

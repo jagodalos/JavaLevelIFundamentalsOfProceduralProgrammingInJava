@@ -33,7 +33,7 @@ public class CostumeDao {
 							+ DB_COLUMN_PRICE + ", " + DB_COLUMN_AVAILABLE + " ) " + "values (?, ?, ?)");
 
 			preparedStatement.setString(1, costume.getName());
-			preparedStatement.setInt(2, costume.getPrice());
+			preparedStatement.setBigDecimal(2, costume.getPrice());
 			preparedStatement.setBoolean(3, costume.isAvailable());
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -52,7 +52,7 @@ public class CostumeDao {
 							+ DB_COLUMN_PRICE + "=?, " + DB_COLUMN_AVAILABLE + "=? where " + DB_COLUMN_ID + "=?");
 
 			preparedStatement.setString(1, costume.getName());
-			preparedStatement.setInt(2, costume.getPrice());
+			preparedStatement.setBigDecimal(2, costume.getPrice());
 			preparedStatement.setBoolean(3, costume.isAvailable());
 			preparedStatement.setInt(4, costume.getId());
 			preparedStatement.executeUpdate();
@@ -77,7 +77,7 @@ public class CostumeDao {
 				Costume costume = new Costume();
 				costume.setId(rs.getInt(DB_COLUMN_ID));
 				costume.setName(rs.getString(DB_COLUMN_NAME));
-				costume.setPrice(rs.getInt(DB_COLUMN_PRICE));
+				costume.setPrice(rs.getBigDecimal(DB_COLUMN_PRICE));
 				costume.setAvailable(rs.getBoolean(DB_COLUMN_AVAILABLE));
 				costumes.add(costume);
 			}

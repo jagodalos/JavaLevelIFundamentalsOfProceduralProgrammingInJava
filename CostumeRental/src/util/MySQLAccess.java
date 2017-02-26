@@ -15,9 +15,8 @@ public class MySQLAccess {
 	private final static String PASSWORD = "root";
 
 	public static Connection getConnection() {
-		Connection connect = null;
 		try {
-			return connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + DB_NAME + "?useSSL=false",
+			return DriverManager.getConnection("jdbc:mysql://localhost:3306/" + DB_NAME + "?useSSL=false",
 					USER, PASSWORD);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -44,11 +43,5 @@ public class MySQLAccess {
 
 		}
 	}
-
-	public static String getDbName() {
-		return DB_NAME;
-	}
-	
-	
 
 }

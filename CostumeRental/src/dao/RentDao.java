@@ -43,10 +43,10 @@ public class RentDao {
 				Rent rent = new Rent();
 				Costume costume = new Costume();
 				rent.setId(rs.getInt(1));
-				rent.setDateTime(CostumeRentalUtil.getCurrentTimeStamp());
+				rent.setDateTime(rs.getTimestamp(2));
 				costume.setId(rs.getInt(3));
 				costume.setName(rs.getString(4));
-				costume.setPrice(rs.getInt(5));
+				costume.setPrice(rs.getBigDecimal(5));
 				rent.setCostume(costume);
 				rents.add(rent);
 			}
