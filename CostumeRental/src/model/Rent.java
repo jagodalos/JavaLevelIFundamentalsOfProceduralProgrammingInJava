@@ -1,12 +1,13 @@
 package model;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 public class Rent {
 
 	private int id;
 	private Costume costume;
-	private LocalDate date;
+	private Timestamp dateTime;
 	
 	public int getId() {
 		return id;
@@ -20,14 +21,11 @@ public class Rent {
 	public void setCostume(Costume costume) {
 		this.costume = costume;
 	}
-	public LocalDate getDate() {
-		return date;
+	public Timestamp getDateTime() {
+		return dateTime;
 	}
-	public void setDate(LocalDate date) {
-		this.date = date;
+	public void setDateTime(Timestamp dateTime) {
+		this.dateTime = dateTime;
 	}
 
-	
-	
-	
 }

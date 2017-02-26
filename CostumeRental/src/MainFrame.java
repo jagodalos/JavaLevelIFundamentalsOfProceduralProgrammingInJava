@@ -1,9 +1,25 @@
+import java.awt.Color;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
 import dao.CostumeDao;
 import dao.CustomerDao;
@@ -11,42 +27,7 @@ import dao.RentDao;
 import model.Costume;
 import model.Customer;
 import model.Rent;
-import net.proteanit.sql.DbUtils;
 import util.CostumeRentalUtil;
-import util.MySQLAccess;
-
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.awt.event.ActionEvent;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.SystemColor;
-import javax.swing.JComboBox;
-import java.awt.Font;
-import javax.swing.table.DefaultTableModel;
-
-import com.mysql.fabric.xmlrpc.base.Array;
-import javax.swing.ListSelectionModel;
-import java.awt.Window.Type;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.Dimension;
-
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.BevelBorder;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.border.LineBorder;
-import javax.swing.ImageIcon;
-import java.awt.Toolkit;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
 
 public class MainFrame {
 
@@ -58,15 +39,9 @@ public class MainFrame {
 	private JTextField textFieldPrice;
 	private JTextField textFieldCustomerName;
 	private JScrollPane scrollPane;
-
-	private List<Costume> costumes = new ArrayList<Costume>();
-	private List<Customer> customers = new ArrayList<Customer>();
-	private List<Rent> rents = new ArrayList<Rent>();
-
-	private Customer curentCustomer;
 	
-	private final String[] tableCostumeColumnNames = { "Name", "Price" };
-	private final String[] rentColumnNames = { "Data", "Name", "Price" };
+	private final String[] tableCostumeColumnNames = { "Id", "Name", "Price" };
+	private final String[] rentColumnNames = { "Id", "Date and time", "Name", "Price" };
 	private JScrollPane scrollPane_1;
 
 	/**
@@ -110,24 +85,25 @@ public class MainFrame {
 		frmCostumeRental.getContentPane().setLayout(null);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(42, 200, 825, 264);
+		scrollPane.setBounds(42, 61, 825, 403);
 
 		frmCostumeRental.getContentPane().add(scrollPane);
 
 		tableCostume = new JTable();
 		scrollPane.setViewportView(tableCostume);
 		scrollPane.setColumnHeader(new JViewport() {
-		      @Override public Dimension getPreferredSize() {
-		        Dimension d = super.getPreferredSize();
-		        d.height = 40;
-		        return d;
-		      }
-		    });
+			@Override
+			public Dimension getPreferredSize() {
+				Dimension d = super.getPreferredSize();
+				d.height = 40;
+				return d;
+			}
+		});
 		tableCostume.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		tableCostume.setFont(new Font("Calibri", Font.PLAIN, 40));
 		tableCostume.setRowHeight(50);
 		tableCostume.getTableHeader().setFont(new Font("SansSerif", Font.ITALIC, 32));
-		tableCostume.setCellSelectionEnabled(false);
+		tableCostume.setRowSelectionAllowed(true);
 
 		JButton btnAddCustomerName = new JButton("ADD CUSTOMER");
 		btnAddCustomerName.setFont(new Font("Calibri", Font.BOLD, 31));
@@ -142,6 +118,7 @@ public class MainFrame {
 		frmCostumeRental.getContentPane().add(btnAddCustomerName);
 
 		textFieldCostume = new JTextField();
+		textFieldCostume.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		textFieldCostume.setBounds(971, 61, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldCostume);
 		textFieldCostume.setColumns(10);
@@ -171,17 +148,27 @@ public class MainFrame {
 		comboBoxCustomer.setBackground(new Color(255, 255, 255));
 		comboBoxCustomer.setBounds(67, 519, 353, 68);
 		frmCostumeRental.getContentPane().add(comboBoxCustomer);
-		
+
 		scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(42, 731, 1669, 169);
 		frmCostumeRental.getContentPane().add(scrollPane_1);
 
 		tableHistoryOfRents = new JTable();
 		scrollPane_1.setViewportView(tableHistoryOfRents);
+		scrollPane_1.setColumnHeader(new JViewport() {
+			@Override
+			public Dimension getPreferredSize() {
+				Dimension d = super.getPreferredSize();
+				d.height = 40;
+				return d;
+			}
+		});
 		tableHistoryOfRents.setBorder(new LineBorder(Color.LIGHT_GRAY, 2, true));
 		tableHistoryOfRents.setFont(new Font("Calibri", Font.PLAIN, 40));
 		tableHistoryOfRents.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		tableHistoryOfRents.getTableHeader().setFont(new Font("SansSerif", Font.ITALIC, 32));
 		tableHistoryOfRents.setRowHeight(50);
+		tableHistoryOfRents.setEnabled(false);
 
 		JButton btnRent = new JButton("RENT");
 		btnRent.setFont(new Font("Calibri", Font.BOLD, 34));
@@ -195,11 +182,13 @@ public class MainFrame {
 		frmCostumeRental.getContentPane().add(btnRent);
 
 		textFieldPrice = new JTextField();
+		textFieldPrice.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		textFieldPrice.setColumns(10);
 		textFieldPrice.setBounds(971, 164, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldPrice);
 
 		textFieldCustomerName = new JTextField();
+		textFieldCustomerName.setFont(new Font("Tahoma", Font.PLAIN, 40));
 		textFieldCustomerName.setColumns(10);
 		textFieldCustomerName.setBounds(471, 519, 420, 75);
 		frmCostumeRental.getContentPane().add(textFieldCustomerName);
@@ -218,7 +207,7 @@ public class MainFrame {
 
 	public void refreshComboBoxCustomer() {
 		CustomerDao customerDao = new CustomerDao();
-		customers = customerDao.getAllCustomers();
+		List<Customer> customers = customerDao.getAllCustomers();
 		comboBoxCustomer.removeAllItems();
 		for (int i = 0; i < customers.size(); i++) {
 			comboBoxCustomer.addItem(customers.get(i));
@@ -227,25 +216,40 @@ public class MainFrame {
 
 	public void refreshCostumeTable() {
 		CostumeDao costumeDao = new CostumeDao();
-		costumes = costumeDao.getAllAvaiableCostume();
-		DefaultTableModel model = new DefaultTableModel(tableCostumeColumnNames, 0);
+		List<Costume> costumes = costumeDao.getAllAvaiableCostume();
+		DefaultTableModel model = new DefaultTableModel(tableCostumeColumnNames, 0) {
+			public boolean isCellEditable(int rowIndex, int mColIndex) {
+				return false;
+			}
+		};
 		for (int i = 0; i < costumes.size(); i++) {
-			model.addRow(new Object[] { costumes.get(i).getName(), costumes.get(i).getPrice() });
+			model.addRow(
+					new Object[] { costumes.get(i).getId(), costumes.get(i).getName(), costumes.get(i).getPrice() });
 
 		}
 		tableCostume.setModel(model);
+		tableCostume.getColumnModel().getColumn(0).setMinWidth(0);
+		tableCostume.getColumnModel().getColumn(0).setMaxWidth(0);
 	}
 
 	public void refreshRentTable() {
-		RentDao rentDao = new RentDao();
-		rents = rentDao.getAllRentsByCustomer(curentCustomer);
-		DefaultTableModel model = new DefaultTableModel(rentColumnNames, 0);
-		for (int i = 0; i < rents.size(); i++) {
-			model.addRow(new Object[] { rents.get(i).getDate(), rents.get(i).getCostume().getName(),
-					rents.get(i).getCostume().getPrice()});
 
+		RentDao rentDao = new RentDao();
+		Customer curentCustomer = (Customer) comboBoxCustomer.getSelectedItem();
+		DefaultTableModel model = new DefaultTableModel(rentColumnNames, 0);
+		
+		if(curentCustomer != null) {
+			List<Rent> rents = rentDao.getAllRentsByCustomer(curentCustomer.getId());
+			for (int i = 0; i < rents.size(); i++) {
+				model.addRow(new Object[] { rents.get(i).getId(), rents.get(i).getDateTime(),
+						rents.get(i).getCostume().getName(), rents.get(i).getCostume().getPrice() });
+
+			}
+			
 		}
 		tableHistoryOfRents.setModel(model);
+		tableHistoryOfRents.getColumnModel().getColumn(0).setMinWidth(0);
+		tableHistoryOfRents.getColumnModel().getColumn(0).setMaxWidth(0);
 	}
 
 	public void addCustomer() {
@@ -279,24 +283,22 @@ public class MainFrame {
 
 	public void rent() {
 		int[] selectedRows = tableCostume.getSelectedRows();
-		List<Costume> costumeSelectedList = new ArrayList<Costume>();
+		RentDao rentDao;
+		CostumeDao costumeDao;
+		Customer currentCustommer = (Customer) comboBoxCustomer.getSelectedItem();
 		for (int i = 0; i < selectedRows.length; i++) {
-			costumeSelectedList.add(costumes.get(selectedRows[i]));
+			rentDao = new RentDao();
+			costumeDao = new CostumeDao();
+			rentDao.rentCostume(currentCustommer.getId(), (int) tableCostume.getModel().getValueAt(selectedRows[i], 0));
+			costumeDao.setCostumeAvailable(selectedRows[i], false);
 		}
-		
-	}
 
-	public void changeCustomer() {
-		setCurentCustomer((Customer) comboBoxCustomer.getSelectedItem());
+		refreshCostumeTable();
 		refreshRentTable();
 	}
 
-	public Customer getCurentCustomer() {
-		return curentCustomer;
-	}
-
-	public void setCurentCustomer(Customer curentCustomer) {
-		this.curentCustomer = curentCustomer;
+	public void changeCustomer() {
+		refreshRentTable();
 	}
 
 }

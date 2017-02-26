@@ -7,16 +7,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.table.DefaultTableModel;
-
 import model.Costume;
-import model.Customer;
 import util.MySQLAccess;
 
 public class CostumeDao {
 
 	private final String DB_COSTUME_TABLE_NAME = "costume";
-	private final String DB_ID = "id";
+	private final String DB_COLUMN_ID = "id";
 	private final String DB_COLUMN_NAME = "name";
 	private final String DB_COLUMN_PRICE = "price";
 	private final String DB_COLUMN_AVAILABLE = "available";
@@ -47,26 +44,27 @@ public class CostumeDao {
 		}
 	}
 
-//	public DefaultTableModel getAllCostume() {
-//		PreparedStatement preparedStatement = null;
-//		ResultSet rs = null;
-//		DefaultTableModel model = new DefaultTableModel(tableCostumeColumnNames, 0);
-//		try {
-//			preparedStatement = connection.prepareStatement(
-//					"select " + DB_COLUMN_NAME + ", " + DB_COLUMN_PRICE + " from " + DB_COSTUME_TABLE_NAME);
-//			rs = preparedStatement.executeQuery();
-//			while (rs.next()) {
-//				model.addRow(new Object[] { rs.getString(DB_COLUMN_NAME), rs.getInt(DB_COLUMN_PRICE) });
-//			}
-//
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		} finally {
-//			MySQLAccess.close(connection, null, preparedStatement);
-//		}
-//		return model;
-//	}
+	public void updateCostume(Costume costume) {
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection
+					.prepareStatement("update " + DB_COSTUME_TABLE_NAME + " set " + DB_COLUMN_NAME + "=?, "
+							+ DB_COLUMN_PRICE + "=?, " + DB_COLUMN_AVAILABLE + "=? where " + DB_COLUMN_ID + "=?");
 
+			preparedStatement.setString(1, costume.getName());
+			preparedStatement.setInt(2, costume.getPrice());
+			preparedStatement.setBoolean(3, costume.isAvailable());
+			preparedStatement.setInt(4, costume.getId());
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			MySQLAccess.close(connection, null, preparedStatement);
+		}
+
+	}
+	
 	public List<Costume> getAllAvaiableCostume() {
 		PreparedStatement preparedStatement = null;
 		ResultSet rs = null;
@@ -77,7 +75,7 @@ public class CostumeDao {
 			rs = preparedStatement.executeQuery();
 			while (rs.next()) {
 				Costume costume = new Costume();
-				costume.setId(rs.getInt(DB_ID));
+				costume.setId(rs.getInt(DB_COLUMN_ID));
 				costume.setName(rs.getString(DB_COLUMN_NAME));
 				costume.setPrice(rs.getInt(DB_COLUMN_PRICE));
 				costume.setAvailable(rs.getBoolean(DB_COLUMN_AVAILABLE));
@@ -91,5 +89,24 @@ public class CostumeDao {
 		}
 		return costumes;
 	}
+	
+	public void setCostumeAvailable(int costumeId, boolean isCostumeAvailable) {
+		PreparedStatement preparedStatement = null;
+		try {
+			preparedStatement = connection
+					.prepareStatement("update " + DB_COSTUME_TABLE_NAME + " set " + DB_COLUMN_AVAILABLE + "=? where " + DB_COLUMN_ID + "=?");
+
+			preparedStatement.setBoolean(1, isCostumeAvailable);
+			preparedStatement.setInt(2, costumeId);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			MySQLAccess.close(connection, null, preparedStatement);
+		}
+
+	}
+	
 
 }
